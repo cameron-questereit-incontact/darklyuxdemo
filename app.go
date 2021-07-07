@@ -1,20 +1,53 @@
 package main
 
 import (
-	"fmt"
-	"html/template"
-	"log"
-	"net/http"
-	"os"
-	"path/filepath"
-	"time"
-
+	"context"
 	"gopkg.in/launchdarkly/go-sdk-common.v2/lduser"
 	"gopkg.in/launchdarkly/go-sdk-common.v2/ldvalue"
 	ld "gopkg.in/launchdarkly/go-server-sdk.v5"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 )
 
 func main() {
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		oscall := <-c
+		log.Printf("system call:%+v", oscall)
+		cancel()
+	}()
+
+	if err := serve(ctx); err != nil {
+		log.Printf("failed to serve:+%v\n", err)
+	}
+}
+
+func serve(ctx context.Context) (err error) {
+
+	mux := http.NewServeMux()
+	fs := http.FileServer(http.Dir("./static"))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	srv := &http.Server{
+		Addr:    ":3030",
+		Handler: mux,
+	}
+
+	go func() {
+		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen:%+s\n", err)
+		}
+	}()
+
+	log.Printf("server started")
 
 	client, _ := ld.MakeClient("sdk-8c9b2899-446a-4f73-946a-aa476b2a576a", 5*time.Second)
 
@@ -24,48 +57,32 @@ func main() {
 		Custom("groups", ldvalue.String("beta_testers")).
 		Build()
 
-	showFeature, _ := client.BoolVariation("cam-is-really-the-best", user, false)
+	_, err = client.BoolVariation("cam-is-really-the-best", user, false)
 
-	fmt.Printf("SDK successfully connected! Feature flag '%s' is %t for this user", "cam-is-really-the-best", showFeature)
-
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	http.HandleFunc("/", serveTemplate)
-
-	log.Println("Listening...")
-	http.ListenAndServe(":3030", nil)
-}
-
-func serveTemplate(w http.ResponseWriter, r *http.Request) {
-	lp := filepath.Join("templates", "layout.html")
-	fp := filepath.Join("templates", filepath.Clean(r.URL.Path))
-
-	// Return a 404 if the template doesn't exist
-	info, err := os.Stat(fp)
 	if err != nil {
-		if os.IsNotExist(err) {
-			http.NotFound(w, r)
-			return
-		}
+		log.Printf("Failed to initialize darkly client %v", err.Error())
 	}
 
-	// Return a 404 if the request is for a directory
-	if info.IsDir() {
-		http.NotFound(w, r)
-		return
+	<-ctx.Done()
+
+	client.Close()
+
+	log.Printf("server stopped")
+
+	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer func() {
+		cancel()
+	}()
+
+	if err = srv.Shutdown(ctxShutDown); err != nil {
+		log.Fatalf("server Shutdown Failed:%+s", err)
 	}
 
-	tmpl, err := template.ParseFiles(lp, fp)
-	if err != nil {
-		// Log the detailed error
-		log.Println(err.Error())
-		// Return a generic "Internal Server Error" message
-		http.Error(w, http.StatusText(500), 500)
-		return
+	log.Printf("server exited properly")
+
+	if err == http.ErrServerClosed {
+		err = nil
 	}
 
-	if err := tmpl.ExecuteTemplate(w, "layout", nil); err != nil {
-		log.Println(err.Error())
-		http.Error(w, http.StatusText(500), 500)
-	}
+	return
 }
