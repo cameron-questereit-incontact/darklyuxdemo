@@ -34,7 +34,7 @@ func serve(ctx context.Context) (err error) {
 
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir("./static"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/", http.StripPrefix("/", fs))
 
 	srv := &http.Server{
 		Addr:    ":3030",
