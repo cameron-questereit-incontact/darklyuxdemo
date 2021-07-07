@@ -1,8 +1,13 @@
 function initializeClient() {
     var user = {
-        "key": "UNIQUE IDENTIFIER"
+        "firstName": "Bob",
+        "lastName": "Loblaw",
+        "key": "bob@example.com",
+        "custom": {
+            "groups": "beta_testers"
+        }
     };
-    var ldclient = LDClient.initialize('60e5b99d680b360cab480798', user);
+    var ldclient = LDClient.initialize('60e5b99d680b360cab480799', user);
 
     ldclient.on('ready', function () {
         console.log("It's now safe to request feature flags");
@@ -17,11 +22,14 @@ function initializeClient() {
 
 function toggleFeature(ldclient, featureKey) {
     var showFeature = ldclient.variation(featureKey, false);
-    classCombination = "." + featureKey
+    featureClass = "." + featureKey
+    toggledClass = featureClass + ".toggled"
+    untoggledClass = featureClass + ".untoggled"
     if (showFeature) {
-        classCombination += ".toggled"
+        $(toggledClass).removeClass("hide")
+        $(untoggledClass).addClass("hide")
     } else {
-        classCombination += ".untoggled"
+        $(untoggledClass).removeClass("hide")
+        $(toggledClass).addClass("hide")
     }
-    $(classCombination).removeClass("hide")
 }

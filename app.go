@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
-	"gopkg.in/launchdarkly/go-sdk-common.v2/lduser"
-	"gopkg.in/launchdarkly/go-sdk-common.v2/ldvalue"
-	ld "gopkg.in/launchdarkly/go-server-sdk.v5"
+	//"strconv"
+	//"gopkg.in/launchdarkly/go-sdk-common.v2/lduser"
+	//"gopkg.in/launchdarkly/go-sdk-common.v2/ldvalue"
+	//ld "gopkg.in/launchdarkly/go-server-sdk.v5"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
+	//"time"
 )
 
 func main() {
@@ -49,40 +50,42 @@ func serve(ctx context.Context) (err error) {
 
 	log.Printf("server started")
 
-	client, _ := ld.MakeClient("sdk-8c9b2899-446a-4f73-946a-aa476b2a576a", 5*time.Second)
+	// client, _ := ld.MakeClient("sdk-56b259c3-46f4-4c3e-8262-5216c972663d", 5*time.Second)
 
-	user := lduser.NewUserBuilder("UNIQUE IDENTIFIER").
-		FirstName("Bob").
-		LastName("Loblaw").
-		Custom("groups", ldvalue.String("beta_testers")).
-		Build()
+	// user := lduser.NewUserBuilder("UNIQUE IDENTIFIER").
+	// 	FirstName("Bob").
+	// 	LastName("Loblaw").
+	// 	Custom("groups", ldvalue.String("beta_testers")).
+	// 	Build()
 
-	_, err = client.BoolVariation("cam-is-really-the-best", user, false)
+	// flagValue, err := client.BoolVariation("cam-is-really-the-best", user, false)
 
-	if err != nil {
-		log.Printf("Failed to initialize darkly client %v", err.Error())
-	}
+	// log.Printf(strconv.FormatBool(flagValue))
 
-	<-ctx.Done()
+	// if err != nil {
+	// 	log.Printf("Failed to initialize darkly client %v", err.Error())
+	// }
 
-	client.Close()
+	 <-ctx.Done()
 
-	log.Printf("server stopped")
+	// client.Close()
 
-	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer func() {
-		cancel()
-	}()
+	// log.Printf("server stopped")
 
-	if err = srv.Shutdown(ctxShutDown); err != nil {
-		log.Fatalf("server Shutdown Failed:%+s", err)
-	}
+	// ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer func() {
+	// 	cancel()
+	// }()
 
-	log.Printf("server exited properly")
+	// if err = srv.Shutdown(ctxShutDown); err != nil {
+	// 	log.Fatalf("server Shutdown Failed:%+s", err)
+	// }
 
-	if err == http.ErrServerClosed {
-		err = nil
-	}
+	// log.Printf("server exited properly")
+
+	// if err == http.ErrServerClosed {
+	// 	err = nil
+	// }
 
 	return
 }
