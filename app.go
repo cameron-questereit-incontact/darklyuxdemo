@@ -26,8 +26,6 @@ func main() {
 
 	showFeature, _ := client.BoolVariation("cam-is-really-the-best", user, false)
 
-	client.Close()
-
 	fmt.Printf("SDK successfully connected! Feature flag '%s' is %t for this user", "cam-is-really-the-best", showFeature)
 
 	fs := http.FileServer(http.Dir("static"))
