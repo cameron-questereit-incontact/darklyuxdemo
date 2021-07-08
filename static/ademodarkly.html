@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>A Launch Darkly Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/stylesheets/main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script crossorigin="anonymous" src="https://unpkg.com/launchdarkly-js-client-sdk@2"></script>
@@ -11,13 +12,66 @@
 </head>
 
 <body onload="initializeClient()">
-    <div class="cam-is-really-the-best toggled hide">
-        <h1>A <strike>Scanner</strike> Demo Darkly</h1>
-        <img src="/assets/scanner-darkly.jpg">
+
+<br/>
+<br/>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Test</h2>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="cam-is-really-the-best-test" >
+                <label class="form-check-label" for="cam-is-really-the-best-test">cam is really the best</label>
+            </div>
+            <h2>Prod</h2>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="cam-is-really-the-best-prod" >
+                <label class="form-check-label" for="cam-is-really-the-best-prod">cam is really the best prod</label>
+            </div>
+        </div>
+
+        <div class="col">
+            <h2>Test</h2>
+            <div class="form-check form-switch ">
+                <input class="form-check-input" type="checkbox" id="entity-mode-outbound-test" >
+                <label class="form-check-label" for="entity-mode-outbound-test">Entity Mode Outbound</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="multi-contact-handling-test" >
+                <label class="form-check-label" for="multi-contact-handling-test">MCH</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="entity-mode-test" >
+                <label class="form-check-label" for="entity-mode-test">Entity Mode</label>
+            </div>
+        </div>
+
+        <div class="col">
+            <h2>Prod</h2>
+            <div class="form-check form-switch ">
+                <input class="form-check-input" type="checkbox" id="entity-mode-outbound-prod" >
+                <label class="form-check-label" for="entity-mode-outbound-prod">Entity Mode Outbound</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="multi-contact-handling-prod" >
+                <label class="form-check-label" for="multi-contact-handling-prod">MCH</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="entity-mode-prod" >
+                <label class="form-check-label" for="entity-mode-prod">Entity Mode</label>
+            </div>
+        </div>
     </div>
-    <div class="cam-is-really-the-best untoggled hide">
-        <h1>Nothing to see here...</h1>
-    </div>
+</div>
+
+
+<!--    <div class="cam-is-really-the-best toggled hide">-->
+<!--        <h1>A <strike>Scanner</strike> Demo Darkly</h1>-->
+<!--        <img src="/assets/scanner-darkly.jpg">-->
+<!--    </div>-->
+<!--    <div class="cam-is-really-the-best untoggled hide">-->
+<!--        <h1>Nothing to see here...</h1>-->
+<!--    </div>-->
 </body>
 
 </html>
