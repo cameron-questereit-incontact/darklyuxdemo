@@ -1,67 +1,75 @@
 function initializeClient() {
      var user = {
-        "firstName": "Bob",
-        "lastName": "Loblaw",
-        "key": "bob@example.com",
+        "key": "102",
         "custom": {
-            "groups": "beta_testers"
-        }
+             "Groups": ["Central"],
+             "Cluster": "DOA-C66COR01"
+         },
      };
-    var ldclienttest = LDClient.initialize('60e5b99d680b360cab480798', user);
+    var ldclienttest = LDClient.initialize('60e5b99d680b360cab480799', user);
 
     ldclienttest.on('ready', function () {
         console.log("It's now safe to request feature flags");
-        toggleFeature(ldclienttest, "cam-is-really-the-best", "test")
-        toggleFeature(ldclienttest, "multi-contact-handling", "test")
         toggleFeature(ldclienttest, "entity-mode", "test")
         toggleFeature(ldclienttest, "entity-mode-outbound", "test")
     });
 
     ldclienttest.on('change', function(settings) {
-        console.log("test change")
+        console.log("102 change")
+        console.log(settings)
         toggleFeatureButtons(settings,"test")
     });
 
-
+    user = {
+        "key": "100",
+        "custom": {
+            "Groups": ["Central"],
+            "Cluster": "DOA-C66COR01"
+        }
+    };
     var ldclientprod = LDClient.initialize('60e5b99d680b360cab480799', user);
 
     ldclientprod.on('ready', function () {
         console.log("It's now safe to request feature flags");
-        toggleFeature(ldclientprod, "cam-is-really-the-best", "prod")
-        toggleFeature(ldclientprod, "multi-contact-handling", "prod")
         toggleFeature(ldclientprod, "entity-mode", "prod")
         toggleFeature(ldclientprod, "entity-mode-outbound", "prod")
     });
 
     ldclientprod.on('change', function(settings) {
+            console.log("100 change")
+            console.log(settings)
             toggleFeatureButtons(settings,"prod")
     });
 }
 
 function toggleFeature(ldclient, featureKey, env) {
     var showFeature = ldclient.variation(featureKey, false);
-    console.log(featureKey + "-" + env)
-    console.log(showFeature)
     if (showFeature) {
         var element = document.getElementById(featureKey + "-" + env)
-        element.checked = true
+        if(element != null) {
+            element.checked = true
+        }
     } else {
         var element = document.getElementById(featureKey + "-" + env)
-        element.checked = false
+        if(element != null) {
+            element.checked = false
+        }
     }
 }
 
 function toggleFeatureButtons(settings, env){
     for (const feature in settings){
-        featureKey = feature
         featurevalue = settings[feature]["current"]
-        console.log(featureKey + "-" + env)
         if(featurevalue){
-        var element = document.getElementById(featureKey + "-" + env)
-            element.checked = true
+        var element = document.getElementById(feature + "-" + env)
+            if(element != null) {
+                element.checked = true
+            }
         } else{
-            var element = document.getElementById(featureKey + "-" + env)
-            element.checked = false
+            var element = document.getElementById(feature + "-" + env)
+            if(element.checked  != null) {
+                element.checked = false
+            }
         }
     }
 }
